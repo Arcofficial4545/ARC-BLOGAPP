@@ -12,7 +12,7 @@ export default function Post() {
 
     const userData = useSelector((state) => state.auth.userData);
 
-    const isAuthor = post && userData ? post.useraid === userData.$id : false; // Changed from userId to useraid
+    const isAuthor = post && userData ? post.useraid === userData.$id : false;
 
     useEffect(() => {
         if (slug) {
@@ -26,53 +26,66 @@ export default function Post() {
     const deletePost = () => {
         appwriteService.deletePost(post.$id).then((status) => {
             if (status) {
-                appwriteService.deleteFile(post.featured_image); // Changed from featuredImage to featured_image
+                appwriteService.deleteFile(post.featured_image);
                 navigate("/");
             }
         });
     };
 
     return post ? (
-        <div className="py-8">
+        <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 py-10">
             <Container>
-                <div className="w-full flex justify-center mb-4 relative border rounded-xl p-2">
-                    <img
-                        src={appwriteService.getFilePreview(post.featured_image)}
-                        alt={post.title}
-                        className="rounded-xl"
-                        onError={(e) => {
-                            console.error("Image failed to load:", e.target.src);
-                            console.error("File ID:", post.featured_image);
-                            e.target.style.display = 'none';
-                        }}
-                        onLoad={() => {
-                            console.log("Image loaded successfully:", post.featured_image);
-                        }}
-                    />
-                    {/* Fallback text when image fails */}
-                    <div style={{ display: 'none' }} className="text-center p-4">
-                        Image failed to load (ID: {post.featured_image})
+                <div className="max-w-4xl mx-auto bg-gray-800 rounded-2xl shadow-2xl overflow-hidden">
+
+                    <div className="relative">
+                        <div className="w-full">
+                            <img
+                                src={appwriteService.getFilePreview(post.featured_image)}
+                                alt={post.title}
+                                className="w-full object-cover max-h-[500px]"
+                                onError={(e) => {
+                                    console.error("Image failed to load:", e.target.src);
+                                    console.error("File ID:", post.featured_image);
+                                    e.target.src = 'https://via.placeholder.com/1200x600/374151/FFFFFF?text=Image+Not+Available';
+                                }}
+                            />
+                        </div>
+
+                        {/* Lighter gradient overlay for better image visibility */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-gray-900/70 via-gray-900/30 to-transparent"></div>
+
+                        {/* Title overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+                            <h1 className="text-3xl md:text-4xl font-bold text-white drop-shadow-lg">
+                                {post.title}
+                            </h1>
+                        </div>
+
+
+                        {isAuthor && (
+                            <div className="absolute top-4 right-4 flex space-x-2">
+                                <Link to={`/edit-post/${post.$id}`}>
+                                    <Button bgColor="bg-blue-600 hover:bg-blue-700" className="shadow-lg transition-all duration-200">
+                                        Edit
+                                    </Button>
+                                </Link>
+                                <Button
+                                    bgColor="bg-red-600 hover:bg-red-700"
+                                    onClick={deletePost}
+                                    className="shadow-lg transition-all duration-200"
+                                >
+                                    Delete
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
-                    {/* Add the edit and delete buttons here */}
-                    {isAuthor && (
-                        <div className="absolute right-6 top-6">
-                            <Link to={`/edit-post/${post.$id}`}>
-                                <Button bgColor="bg-green-500" className="mr-3">
-                                    Edit
-                                </Button>
-                            </Link>
-                            <Button bgColor="bg-red-500" onClick={deletePost}>
-                                Delete
-                            </Button>
+                    {/* Content Section */}
+                    <div className="p-6 md:p-8 text-gray-200">
+                        <div className="prose prose-lg prose-invert max-w-none">
+                            {parse(post.content)}
                         </div>
-                    )}
-                </div>
-                <div className="w-full mb-6">
-                    <h1 className="text-2xl font-bold">{post.title}</h1>
-                </div>
-                <div className="browser-css">
-                    {parse(post.content)}
+                    </div>
                 </div>
             </Container>
         </div>
