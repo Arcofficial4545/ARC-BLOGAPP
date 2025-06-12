@@ -8,14 +8,14 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import { Protected, Login } from './component/index.js'
 
-
-import AddPost from "./pages/AddPost";
+// Fix these import statements to match actual file names
+import AddPost from "./pages/Addpost";  // Changed from AddPost to Addpost
 import Signup from './pages/Signup'
-import EditPost from "./pages/EditPost";
+import EditPost from "./pages/Editpost";  // Changed from EditPost to Editpost
 
 import Post from "./pages/Post";
 
-import AllPosts from "./pages/AllPosts";
+import AllPosts from "./pages/Allposts";  // Changed from AllPosts to Allposts
 
 const router = createBrowserRouter([
   {
